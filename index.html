@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mess Wastage Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>Mess Wastage Tracker</h1>
+
+<div class="container">
+
+<h2>Attendance</h2>
+
+<label>Date</label>
+<input type="date" id="date">
+
+<label>Meal Type</label>
+<select id="meal">
+<option>Breakfast</option>
+<option>Lunch</option>
+<option>Dinner</option>
+</select>
+
+<label>Students Present</label>
+<input type="number" id="students">
+
+<button onclick="saveAttendance()">Save Attendance</button>
+
+<h2>Food Wastage</h2>
+
+<label>Food Item</label>
+<input type="text" id="food">
+
+<label>Quantity Cooked (kg)</label>
+<input type="number" id="cooked">
+
+<label>Quantity Wasted (kg)</label>
+<input type="number" id="wasted">
+
+<button onclick="calculateWaste()">Calculate Waste</button>
+
+<p id="result"></p>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
