@@ -53,6 +53,93 @@ function fmtDate(isoStr) {
 const mealOrder = { BREAKFAST: 1, LUNCH: 2, SNACKS: 3, DINNER: 4 };
 const mealEmoji = { BREAKFAST: '🌅', LUNCH: '☀️', SNACKS: '🫖', DINNER: '🌙' };
 
+// ---- FOOD CHIP SELECTOR ----
+const foodOptions = {
+  BREAKFAST: ['Poha','Upma','Idli','Dosa','Bread','Omelette','Paratha','Alu Puri','Sabudana Khichdi','Sheera','Chai','Milk','Juice','Banana','Sprouts'],
+  LUNCH:     ['Rice','Dal','Roti','Chapati','Rajma','Chhole','Paneer Sabzi','Aloo Sabzi','Mixed Veg','Palak','Kadhi','Jeera Rice','Pulao','Salad','Papad','Raita','Pickle','Sweet/Kheer'],
+  DINNER:    ['Rice','Dal','Roti','Chapati','Dal Makhani','Paneer','Aloo Sabzi','Mix Veg','Rajma','Palak','Kadhi','Dal Tadka','Salad','Papad','Raita','Pickle','Kheer','Halwa'],
+  SNACKS:    ['Chai','Coffee','Biscuits','Samosa','Bread Pakoda','Poha','Chivda','Namkeen','Fruit','Lassi','Juice','Peanuts','Roasted Chana']
+};
+
+let selectedChips = new Set();
+
+function updateFoodChips(meal) {
+  selectedChips.clear();
+  const box = document.getElementById('chipSelector');
+  const selBox = document.getElementById('selectedItemsBox');
+  if (!box) return;
+  if (!meal || !foodOptions[meal]) {
+    box.innerHTML = '<span style="color:var(--text-light);font-size:0.82rem;padding:6px 0">Select a meal type first...</span>';
+    if (selBox) selBox.style.display = 'none';
+    return;
+  }
+  box.innerHTML = foodOptions[meal].map(item => `
+    <span class="food-chip" onclick="toggleChip(this, '${item}')" style="
+      display:inline-flex;align-items:center;padding:6px 14px;
+      background:white;border:1.5px solid var(--border);border-radius:50px;
+      font-size:0.8rem;font-weight:500;cursor:pointer;color:var(--text-mid);
+      transition:all 0.15s;user-select:none;
+    ">${item}</span>
+  `).join('');
+  if (selBox) selBox.style.display = 'none';
+  updateSelectedDisplay();
+}
+
+function toggleChip(el, item) {
+  if (selectedChips.has(item)) {
+    selectedChips.delete(item);
+    el.style.background = 'white';
+    el.style.borderColor = 'var(--border)';
+    el.style.color = 'var(--text-mid)';
+    el.style.fontWeight = '500';
+  } else {
+    selectedChips.add(item);
+    el.style.background = 'linear-gradient(135deg,#1a6ee8,#60aeff)';
+    el.style.borderColor = '#1a6ee8';
+    el.style.color = 'white';
+    el.style.fontWeight = '600';
+  }
+  updateSelectedDisplay();
+}
+
+function addCustomItem() {
+  const input = document.getElementById('customItemInput');
+  const val = input?.value.trim();
+  if (!val) { showToast('Type an item name first', 'warning'); return; }
+  selectedChips.add(val);
+  input.value = '';
+  updateSelectedDisplay();
+  showToast(`"${val}" added!`, 'success');
+}
+
+function updateSelectedDisplay() {
+  const listEl = document.getElementById('selectedItemsList');
+  const box = document.getElementById('selectedItemsBox');
+  if (!listEl || !box) return;
+  if (selectedChips.size === 0) { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  listEl.innerHTML = [...selectedChips].map(item => `
+    <span style="display:inline-flex;align-items:center;gap:5px;background:#e8f0fe;color:#1a6ee8;padding:4px 10px;border-radius:50px;font-size:0.78rem;font-weight:600">
+      ${item}
+      <span onclick="removeSelectedChip('${item}')" style="cursor:pointer;font-size:0.9rem;line-height:1;color:#1a6ee8;font-weight:700">×</span>
+    </span>
+  `).join('');
+}
+
+function removeSelectedChip(item) {
+  selectedChips.delete(item);
+  // Deselect chip in the grid too if it exists
+  document.querySelectorAll('.food-chip').forEach(el => {
+    if (el.textContent.trim() === item) {
+      el.style.background = 'white';
+      el.style.borderColor = 'var(--border)';
+      el.style.color = 'var(--text-mid)';
+      el.style.fontWeight = '500';
+    }
+  });
+  updateSelectedDisplay();
+}
+
 // ---- INIT ----
 window.addEventListener('DOMContentLoaded', () => {
   seedDemoData();
@@ -111,25 +198,29 @@ function showSection(name, el) {
 document.getElementById('menuForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const btn = document.getElementById('menuSubmitBtn');
+
+  const mealType = document.getElementById('mealType').value;
+  if (!mealType) { showToast('Please select a meal type', 'warning'); return; }
+  if (selectedChips.size === 0) { showToast('Please select at least one food item', 'warning'); return; }
+
   const entry = {
     id: Date.now(),
     date: document.getElementById('menuDate').value,
-    mealType: document.getElementById('mealType').value,
-    items: document.getElementById('menuItems').value,
+    mealType,
+    items: [...selectedChips].join(', '),
     servings: parseInt(document.getElementById('menuServings').value),
     qtyKg: parseFloat(document.getElementById('menuQty').value) || 0,
   };
   btn.innerHTML = '<span class="spinner"></span>';
   btn.disabled = true;
 
-  // Try API; fallback to localStorage
-  try {
-    await API.mess.addMenu({ ...entry, userId: user?.id });
-  } catch { /* backend not up – use localStorage */ }
+  try { await API.mess.addMenu({ ...entry, userId: user?.id }); } catch {}
 
   menuLogs.push(entry);
   localStorage.setItem('mess_menus', JSON.stringify(menuLogs));
   document.getElementById('menuForm').reset();
+  selectedChips.clear();
+  updateFoodChips('');
   setDefaultDates();
   menuTableRender();
   updateUI();
@@ -143,14 +234,17 @@ function menuTableRender() {
   if (!tbody) return;
   if (menuLogs.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-light)">No menus logged yet</td></tr>'; return; }
   const sorted = [...menuLogs].sort((a, b) => b.date.localeCompare(a.date) || (mealOrder[a.mealType]||9) - (mealOrder[b.mealType]||9));
-  tbody.innerHTML = sorted.map(r => `
-    <tr>
+  tbody.innerHTML = sorted.map(r => {
+    const itemBadges = (r.items || '').split(',').map(i => i.trim()).filter(Boolean)
+      .map(i => `<span style="display:inline-block;background:#e8f0fe;color:#1a6ee8;padding:2px 8px;border-radius:50px;font-size:0.72rem;font-weight:600;margin:2px">${i}</span>`).join('');
+    return `<tr>
       <td>${fmtDate(r.date)}</td>
       <td><span class="badge badge-primary">${mealEmoji[r.mealType]||''} ${r.mealType}</span></td>
-      <td>${r.items}</td>
+      <td style="max-width:240px">${itemBadges}</td>
       <td>${r.servings}</td>
       <td>${r.qtyKg || '—'} kg</td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 
 // ---- WASTE FORM ----
