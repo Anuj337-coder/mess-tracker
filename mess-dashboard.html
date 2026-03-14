@@ -109,18 +109,21 @@
       </div>
       <canvas id="overviewChart" height="120"></canvas>
     </div>
-    <!-- Recent donations -->
+
+    <!-- ===== DAILY FOOD REPORT ===== -->
     <div class="card" style="margin-top:0">
-      <div class="section-heading">
-        <h3>🕐 Recent Activity</h3>
-      </div>
-      <div id="recentActivity">
-        <div class="empty-state">
-          <div class="empty-icon">🌱</div>
-          <h4>No activity yet</h4>
-          <p>Start by adding today's menu!</p>
+      <div class="section-heading" style="margin-bottom:18px;flex-wrap:wrap;gap:12px">
+        <div>
+          <h3 style="margin-bottom:4px">📅 Daily Food Report</h3>
+          <p style="font-size:0.8rem;color:var(--text-light);margin:0">Pick any date to see all meals &amp; waste at a glance</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <label style="font-size:0.82rem;font-weight:600;color:var(--text-mid)">📆 Date:</label>
+          <input type="date" id="reportDate" class="form-control" style="width:auto;padding:6px 12px;font-size:0.85rem" onchange="renderDailyReport(this.value)">
         </div>
       </div>
+      <div id="dailyReportGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:16px"></div>
+      <div id="dailyReportSummary"></div>
     </div>
   </div>
 

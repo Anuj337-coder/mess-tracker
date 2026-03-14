@@ -42,6 +42,17 @@ function seedDemoData() {
   }
 }
 
+// ---- HELPERS ----
+function fmtDate(isoStr) {
+  if (!isoStr) return '—';
+  const [y, m, d] = isoStr.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${parseInt(d)} ${months[parseInt(m)-1]} ${y}`;
+}
+
+const mealOrder = { BREAKFAST: 1, LUNCH: 2, SNACKS: 3, DINNER: 4 };
+const mealEmoji = { BREAKFAST: '🌅', LUNCH: '☀️', SNACKS: '🫖', DINNER: '🌙' };
+
 // ---- INIT ----
 window.addEventListener('DOMContentLoaded', () => {
   seedDemoData();
@@ -49,7 +60,7 @@ window.addEventListener('DOMContentLoaded', () => {
   setDefaultDates();
   loadNGOs();
   computeAnalytics();
-  renderActivity();
+  renderDailyReport(new Date().toISOString().split('T')[0]);
   renderHistory();
   loadNotifications();
 });
@@ -65,11 +76,11 @@ function updateUI() {
   document.getElementById('statDonations').textContent = donations.length;
   document.getElementById('statNGOs').textContent = ngos.length;
 
-  // Overview chart
-  const last7 = wasteLogs.slice(-7);
+  // Overview chart — sort by date before slicing
+  const sorted7 = [...wasteLogs].sort((a, b) => a.date.localeCompare(b.date)).slice(-7);
   initOverviewChart(
-    last7.map(r => r.date.slice(5)),
-    last7.map(r => r.wastedKg)
+    sorted7.map(r => fmtDate(r.date).slice(0,6)),
+    sorted7.map(r => r.wastedKg)
   );
   wasteTableRender();
   menuTableRender();
@@ -131,10 +142,11 @@ function menuTableRender() {
   const tbody = document.getElementById('menuTableBody');
   if (!tbody) return;
   if (menuLogs.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-light)">No menus logged yet</td></tr>'; return; }
-  tbody.innerHTML = menuLogs.slice().reverse().map(r => `
+  const sorted = [...menuLogs].sort((a, b) => b.date.localeCompare(a.date) || (mealOrder[a.mealType]||9) - (mealOrder[b.mealType]||9));
+  tbody.innerHTML = sorted.map(r => `
     <tr>
-      <td>${r.date}</td>
-      <td><span class="badge badge-primary">${r.mealType}</span></td>
+      <td>${fmtDate(r.date)}</td>
+      <td><span class="badge badge-primary">${mealEmoji[r.mealType]||''} ${r.mealType}</span></td>
       <td>${r.items}</td>
       <td>${r.servings}</td>
       <td>${r.qtyKg || '—'} kg</td>
@@ -187,12 +199,13 @@ function wasteTableRender() {
   const tbody = document.getElementById('wasteTableBody');
   if (!tbody) return;
   if (wasteLogs.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-light)">No waste records yet</td></tr>'; return; }
-  tbody.innerHTML = wasteLogs.slice().reverse().map(r => {
+  const sorted = [...wasteLogs].sort((a, b) => b.date.localeCompare(a.date) || (mealOrder[a.mealType]||9) - (mealOrder[b.mealType]||9));
+  tbody.innerHTML = sorted.map(r => {
     const pct = r.cookedKg > 0 ? ((r.wastedKg / r.cookedKg) * 100).toFixed(1) : 0;
     const badge = pct > 20 ? 'badge-danger' : pct > 10 ? 'badge-warning' : 'badge-success';
     return `<tr>
-      <td>${r.date}</td>
-      <td><span class="badge badge-primary">${r.mealType || '—'}</span></td>
+      <td>${fmtDate(r.date)}</td>
+      <td><span class="badge badge-primary">${mealEmoji[r.mealType]||''} ${r.mealType || '—'}</span></td>
       <td>${r.foodItem}</td>
       <td>${r.cookedKg} kg</td>
       <td>${r.wastedKg} kg</td>
@@ -304,32 +317,93 @@ function renderHistory() {
     tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📋</div><h4>No donations yet</h4><p>Connect with an NGO to start donating</p></div></td></tr>`;
     return;
   }
-  tbody.innerHTML = donations.slice().reverse().map(d => {
+  const sorted = [...donations].sort((a, b) => b.date.localeCompare(a.date));
+  tbody.innerHTML = sorted.map(d => {
     const badge = d.status === 'ACCEPTED' ? 'badge-success' : d.status === 'REJECTED' ? 'badge-danger' : 'badge-pending';
     return `<tr>
       <td><code style="font-size:0.78rem;background:var(--bg);padding:3px 8px;border-radius:4px">${d.receiptCode}</code></td>
       <td>${d.ngoName}</td>
       <td>${d.foodDesc}</td>
       <td>${d.quantityKg} kg</td>
-      <td>${d.date}</td>
+      <td>${fmtDate(d.date)}</td>
       <td><span class="badge ${badge}">${d.status}</span></td>
     </tr>`;
   }).join('');
 }
 
-// ---- ACTIVITY ----
-function renderActivity() {
-  const el = document.getElementById('recentActivity');
-  if (!el) return;
-  const all = [...menuLogs.slice(-3).map(m => ({type:'menu',text:`Menu logged: ${m.mealType} on ${m.date}`,icon:'📋'})),
-               ...wasteLogs.slice(-2).map(w => ({type:'waste',text:`Waste logged: ${w.wastedKg}kg on ${w.date}`,icon:'🗑️'})),
-               ...donations.slice(-2).map(d => ({type:'donation',text:`Donation to ${d.ngoName}: ${d.quantityKg}kg`,icon:'🤝'}))];
-  if (all.length === 0) return;
-  el.innerHTML = all.map(a => `
-    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
-      <span style="font-size:1.3rem">${a.icon}</span>
-      <span style="font-size:0.875rem;color:var(--text-mid)">${a.text}</span>
-    </div>`).join('');
+// ---- DAILY REPORT ----
+function renderDailyReport(date) {
+  // Set the date picker value
+  const picker = document.getElementById('reportDate');
+  if (picker) picker.value = date;
+
+  const grid = document.getElementById('dailyReportGrid');
+  const summary = document.getElementById('dailyReportSummary');
+  if (!grid || !summary) return;
+
+  const meals = ['BREAKFAST', 'LUNCH', 'SNACKS', 'DINNER'];
+  const mealLabels = { BREAKFAST: 'Breakfast', LUNCH: 'Lunch', SNACKS: 'Snacks', DINNER: 'Dinner' };
+  const mealColors = { BREAKFAST: '#f59e0b', LUNCH: '#3b82f6', SNACKS: '#8b5cf6', DINNER: '#1a6ee8' };
+
+  let totalCooked = 0, totalWasted = 0;
+  let hasAnyData = false;
+
+  grid.innerHTML = meals.map(meal => {
+    const menuEntry = menuLogs.find(m => m.date === date && m.mealType === meal);
+    const wasteEntry = wasteLogs.find(w => w.date === date && w.mealType === meal);
+
+    if (!menuEntry && !wasteEntry) {
+      return `<div style="background:var(--bg);border-radius:14px;padding:18px;border:2px dashed var(--border);text-align:center;color:var(--text-light)">
+        <div style="font-size:1.8rem;margin-bottom:8px">${mealEmoji[meal]}</div>
+        <div style="font-weight:700;font-size:0.9rem;color:var(--text-mid)">${mealLabels[meal]}</div>
+        <div style="font-size:0.78rem;margin-top:8px">Not logged</div>
+      </div>`;
+    }
+
+    hasAnyData = true;
+    const cooked = wasteEntry?.cookedKg || menuEntry?.qtyKg || 0;
+    const wasted = wasteEntry?.wastedKg || 0;
+    const pct = cooked > 0 ? ((wasted / cooked) * 100).toFixed(1) : 0;
+    const pctColor = pct > 20 ? '#ef4444' : pct > 10 ? '#f59e0b' : '#10b981';
+    totalCooked += cooked;
+    totalWasted += wasted;
+
+    return `<div style="background:white;border-radius:14px;padding:18px;border:2px solid ${mealColors[meal]}22;box-shadow:0 2px 12px rgba(0,0,0,0.06)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+        <span style="font-size:1.5rem">${mealEmoji[meal]}</span>
+        <span style="font-weight:700;font-size:0.95rem;color:${mealColors[meal]}">${mealLabels[meal]}</span>
+      </div>
+      ${menuEntry ? `<div style="font-size:0.78rem;color:var(--text-mid);margin-bottom:10px;line-height:1.5">🍽️ <strong>Items:</strong> ${menuEntry.items}</div>` : ''}
+      ${menuEntry ? `<div style="font-size:0.78rem;color:var(--text-mid);margin-bottom:6px">👥 Servings: <strong>${menuEntry.servings}</strong></div>` : ''}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+        <div style="background:var(--bg);border-radius:8px;padding:8px;text-align:center">
+          <div style="font-size:1rem;font-weight:700;color:#3b82f6">${cooked} kg</div>
+          <div style="font-size:0.7rem;color:var(--text-light)">Cooked</div>
+        </div>
+        <div style="background:var(--bg);border-radius:8px;padding:8px;text-align:center">
+          <div style="font-size:1rem;font-weight:700;color:${pctColor}">${wasted} kg</div>
+          <div style="font-size:0.7rem;color:var(--text-light)">Wasted</div>
+        </div>
+      </div>
+      ${cooked > 0 ? `<div style="margin-top:10px;text-align:center;font-size:0.8rem;font-weight:600;color:${pctColor}">♻️ Waste: ${pct}%</div>` : ''}
+    </div>`;
+  }).join('');
+
+  if (hasAnyData) {
+    const totalPct = totalCooked > 0 ? ((totalWasted / totalCooked) * 100).toFixed(1) : 0;
+    const summaryColor = totalPct > 20 ? '#ef4444' : totalPct > 10 ? '#f59e0b' : '#10b981';
+    summary.innerHTML = `
+      <div style="background:var(--bg);border-radius:12px;padding:16px 20px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between">
+        <div style="font-weight:700;font-size:0.9rem;color:var(--text-dark)">📊 Day Summary — ${fmtDate(date)}</div>
+        <div style="display:flex;gap:24px;flex-wrap:wrap">
+          <div style="text-align:center"><div style="font-size:1.1rem;font-weight:700;color:#3b82f6">${totalCooked.toFixed(1)} kg</div><div style="font-size:0.72rem;color:var(--text-light)">Total Cooked</div></div>
+          <div style="text-align:center"><div style="font-size:1.1rem;font-weight:700;color:${summaryColor}">${totalWasted.toFixed(1)} kg</div><div style="font-size:0.72rem;color:var(--text-light)">Total Wasted</div></div>
+          <div style="text-align:center"><div style="font-size:1.1rem;font-weight:700;color:${summaryColor}">${totalPct}%</div><div style="font-size:0.72rem;color:var(--text-light)">Waste Rate</div></div>
+        </div>
+      </div>`;
+  } else {
+    summary.innerHTML = `<div style="text-align:center;padding:16px;color:var(--text-light);font-size:0.85rem">No data logged for <strong>${fmtDate(date)}</strong>. Go to <strong>Menu Entry</strong> or <strong>Waste Log</strong> to add today's data.</div>`;
+  }
 }
 
 // ---- NOTIFICATIONS ----
