@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mess Dashboard — FoodConnect</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" style="position:fixed">
+  <div class="nav-logo">
+    <div class="logo-icon">🍱</div>
+    Food<span>Connect</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <button class="notif-btn" id="notifBtn" onclick="toggleNotifPanel()">🔔
+      <span class="notif-badge" id="notifCount">0</span>
+    </button>
+    <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="logout()">
+      <div style="width:36px;height:36px;background:var(--gradient);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:1rem">👤</div>
+      <span style="font-size:0.85rem;font-weight:600;color:var(--text-mid)" id="navUserName">Mess Owner</span>
+    </div>
+  </div>
+</nav>
+
+<!-- SIDEBAR -->
+<div class="dashboard-wrapper">
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-avatar">🍛</div>
+    <div class="sidebar-user-name" id="sidebarName">Loading...</div>
+    <div class="sidebar-user-role">Mess Owner</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-label">Main</div>
+    <a href="#overview" class="active" onclick="showSection('overview',this)">
+      <span class="icon">📊</span> Overview
+    </a>
+    <a href="#menu" onclick="showSection('menu',this)">
+      <span class="icon">📋</span> Menu Entry
+    </a>
+    <a href="#waste" onclick="showSection('waste',this)">
+      <span class="icon">🗑️</span> Waste Log
+    </a>
+    <a href="#analytics" onclick="showSection('analytics',this)">
+      <span class="icon">📈</span> Analytics
+    </a>
+    <div class="sidebar-label">Community</div>
+    <a href="#ngo" onclick="showSection('ngo',this)">
+      <span class="icon">🏥</span> Connect NGO
+    </a>
+    <a href="#history" onclick="showSection('history',this)">
+      <span class="icon">📝</span> Donation History
+    </a>
+    <div class="sidebar-label">Account</div>
+    <a href="#" onclick="logout()">
+      <span class="icon">🚪</span> Logout
+    </a>
+  </nav>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+  <!-- ===== OVERVIEW SECTION ===== -->
+  <div id="sec-overview" class="dash-section">
+    <div class="section-heading">
+      <h3>📊 Overview</h3>
+      <span id="todayDate" class="badge badge-primary"></span>
+    </div>
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-icon blue">📋</div>
+        <div>
+          <div class="stat-value" id="statMenus">0</div>
+          <div class="stat-label">Menus Logged</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange">🗑️</div>
+        <div>
+          <div class="stat-value" id="statWaste">0 kg</div>
+          <div class="stat-label">Total Waste This Week</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">🤝</div>
+        <div>
+          <div class="stat-value" id="statDonations">0</div>
+          <div class="stat-label">Donations Made</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple">🏥</div>
+        <div>
+          <div class="stat-value" id="statNGOs">0</div>
+          <div class="stat-label">NGOs Connected</div>
+        </div>
+      </div>
+    </div>
+    <!-- Quick Chart Preview -->
+    <div class="chart-card">
+      <div class="section-heading" style="margin-bottom:16px">
+        <h3>📈 This Week's Waste Trend</h3>
+        <button class="btn btn-outline btn-sm" onclick="showSection('analytics', document.querySelector('[onclick*=analytics]'))">Full Analytics →</button>
+      </div>
+      <canvas id="overviewChart" height="120"></canvas>
+    </div>
+    <!-- Recent donations -->
+    <div class="card" style="margin-top:0">
+      <div class="section-heading">
+        <h3>🕐 Recent Activity</h3>
+      </div>
+      <div id="recentActivity">
+        <div class="empty-state">
+          <div class="empty-icon">🌱</div>
+          <h4>No activity yet</h4>
+          <p>Start by adding today's menu!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MENU ENTRY SECTION ===== -->
+  <div id="sec-menu" class="dash-section" style="display:none">
+    <div class="section-heading">
+      <h3>📋 Daily Menu Entry</h3>
+      <span class="badge badge-primary">Log what's being served today</span>
+    </div>
+    <div class="card" style="max-width:640px">
+      <form id="menuForm">
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="menuDate" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Meal Type</label>
+            <select id="mealType" class="form-control" required>
+              <option value="">Select meal type</option>
+              <option value="BREAKFAST">🌅 Breakfast</option>
+              <option value="LUNCH">☀️ Lunch</option>
+              <option value="DINNER">🌙 Dinner</option>
+              <option value="SNACKS">🫖 Snacks</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Menu Items (comma-separated)</label>
+          <input type="text" id="menuItems" class="form-control" placeholder="e.g. Rice, Dal, Paneer, Roti, Salad" required>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Servings Planned</label>
+            <input type="number" id="menuServings" class="form-control" placeholder="e.g. 150" min="1" required>
+          </div>
+          <div class="form-group">
+            <label>Estimated Quantity (kg)</label>
+            <input type="number" id="menuQty" class="form-control" placeholder="e.g. 60" min="0.1" step="0.1">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="menuSubmitBtn">
+          ✅ Save Menu Entry
+        </button>
+      </form>
+    </div>
+    <!-- Menu history table -->
+    <div class="card" style="margin-top:24px">
+      <div class="section-heading">
+        <h3>📅 Past Menus</h3>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th><th>Meal</th><th>Items</th><th>Servings</th><th>Qty (kg)</th>
+            </tr>
+          </thead>
+          <tbody id="menuTableBody">
+            <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-light)">No menus logged yet</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== WASTE LOG SECTION ===== -->
+  <div id="sec-waste" class="dash-section" style="display:none">
+    <div class="section-heading">
+      <h3>🗑️ Food Waste Log</h3>
+      <span class="badge badge-warning">Track leftover food</span>
+    </div>
+    <div class="card" style="max-width:640px">
+      <form id="wasteForm">
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="wasteDate" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Meal Type</label>
+            <select id="wasteMealType" class="form-control">
+              <option value="">Select</option>
+              <option value="BREAKFAST">Breakfast</option>
+              <option value="LUNCH">Lunch</option>
+              <option value="DINNER">Dinner</option>
+              <option value="SNACKS">Snacks</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Food Item</label>
+          <input type="text" id="wasteItem" class="form-control" placeholder="e.g. Rice, Dal..." required>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Quantity Cooked (kg)</label>
+            <input type="number" id="wasteCooked" class="form-control" placeholder="e.g. 40" min="0" step="0.1" required>
+          </div>
+          <div class="form-group">
+            <label>Quantity Wasted (kg)</label>
+            <input type="number" id="wasteWasted" class="form-control" placeholder="e.g. 5" min="0" step="0.1" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes (optional)</label>
+          <input type="text" id="wasteNotes" class="form-control" placeholder="e.g. Less students attended">
+        </div>
+        <div id="wastePercent" style="padding:10px 14px;background:var(--bg);border-radius:8px;font-size:0.875rem;color:var(--text-mid);margin-bottom:16px;display:none">
+          ♻️ Wastage: <strong id="wastePercentVal">—</strong>
+        </div>
+        <button type="submit" class="btn btn-primary" id="wasteSubmitBtn">
+          📝 Save Waste Log
+        </button>
+      </form>
+    </div>
+    <div class="card" style="margin-top:24px">
+      <h3 style="margin-bottom:16px;font-size:1.05rem">🗃️ Waste Records</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Date</th><th>Meal</th><th>Item</th><th>Cooked</th><th>Wasted</th><th>Waste%</th><th>Status</th></tr>
+          </thead>
+          <tbody id="wasteTableBody">
+            <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-light)">No waste records yet</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ANALYTICS SECTION ===== -->
+  <div id="sec-analytics" class="dash-section" style="display:none">
+    <div class="section-heading">
+      <h3>📈 Food Waste Analytics</h3>
+      <span class="badge badge-primary">Last 7 days</span>
+    </div>
+    <div class="stats-grid" style="margin-bottom:24px">
+      <div class="stat-card">
+        <div class="stat-icon orange">📉</div>
+        <div><div class="stat-value" id="avgWaste">—</div><div class="stat-label">Avg. Daily Waste (kg)</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">📊</div>
+        <div><div class="stat-value" id="totalWaste">—</div><div class="stat-label">Total Waste This Week</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">🏆</div>
+        <div><div class="stat-value" id="bestDay">—</div><div class="stat-label">Best Day (Lowest Waste)</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple">📅</div>
+        <div><div class="stat-value" id="worstDay">—</div><div class="stat-label">Day Needs Improvement</div></div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3 style="margin-bottom:6px;font-size:1rem">🗑️ Daily Waste (kg) — Last 7 Days</h3>
+      <p style="font-size:0.8rem;color:var(--text-light);margin-bottom:16px">Compare cooked vs wasted quantities</p>
+      <canvas id="weeklyWasteChart" height="160"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3 style="margin-bottom:6px;font-size:1rem">🍽️ Waste by Meal Type</h3>
+      <p style="font-size:0.8rem;color:var(--text-light);margin-bottom:16px">Which meal generates most waste?</p>
+      <div style="max-width:360px;margin:0 auto">
+        <canvas id="mealTypeChart" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== NGO CONNECT SECTION ===== -->
+  <div id="sec-ngo" class="dash-section" style="display:none">
+    <div class="section-heading">
+      <h3>🏥 Connect with NGOs</h3>
+      <span class="badge badge-ngo">Donate surplus food</span>
+    </div>
+
+    <!-- Surplus Post Form -->
+    <div class="card" style="margin-bottom:28px;max-width:700px">
+      <h4 style="margin-bottom:16px;font-size:1rem">📦 Post Surplus Food</h4>
+      <form id="donationForm">
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Food Description</label>
+            <input type="text" id="donFoodDesc" class="form-control" placeholder="e.g. Leftover Rice, Dal, Roti" required>
+          </div>
+          <div class="form-group">
+            <label>Quantity Available (kg)</label>
+            <input type="number" id="donQuantity" class="form-control" placeholder="e.g. 12" min="0.5" step="0.5" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Select NGO to Donate</label>
+          <select id="donNGO" class="form-control" required>
+            <option value="">Loading NGOs...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Pickup Time / Note (optional)</label>
+          <input type="text" id="donNote" class="form-control" placeholder="e.g. Available after 3 PM today">
+        </div>
+        <button type="submit" class="btn btn-success" id="donSubmitBtn">
+          🤝 Send Donation Request
+        </button>
+      </form>
+    </div>
+
+    <!-- NGO Cards -->
+    <div class="section-heading">
+      <h3>📋 Available NGOs Near You</h3>
+    </div>
+    <div class="ngo-grid" id="ngoGrid">
+      <div class="empty-state"><div class="empty-icon">🔄</div><p>Loading NGOs...</p></div>
+    </div>
+  </div>
+
+  <!-- ===== DONATION HISTORY SECTION ===== -->
+  <div id="sec-history" class="dash-section" style="display:none">
+    <div class="section-heading">
+      <h3>📝 Donation History</h3>
+      <span class="badge badge-success">All past donations</span>
+    </div>
+    <div class="table-wrapper" style="background:white;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)">
+      <table>
+        <thead>
+          <tr>
+            <th>Receipt #</th><th>NGO Name</th><th>Food</th><th>Qty (kg)</th><th>Date</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="historyTableBody">
+          <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-light)">
+            <div class="empty-state">
+              <div class="empty-icon">📋</div>
+              <h4>No donations yet</h4>
+              <p>Connect with an NGO to start donating surplus food</p>
+            </div>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- NOTIFICATION PANEL -->
+<div id="notifPanel" style="display:none;position:fixed;top:75px;right:20px;width:320px;background:white;border-radius:var(--radius);box-shadow:0 20px 60px rgba(0,0,0,0.15);border:1px solid var(--border);z-index:999;max-height:400px;overflow-y:auto">
+  <div style="padding:16px;border-bottom:1px solid var(--border);font-weight:700;font-size:0.9rem;display:flex;justify-content:space-between;align-items:center">
+    🔔 Notifications
+    <button onclick="document.getElementById('notifPanel').style.display='none'" style="background:none;border:none;cursor:pointer;color:var(--text-light);font-size:1.1rem">✕</button>
+  </div>
+  <div id="notifList" style="padding:8px 0">
+    <div style="padding:20px;text-align:center;color:var(--text-light);font-size:0.85rem">No new notifications</div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container"></div>
+
+<script src="js/main.js"></script>
+<script src="js/api.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/mess.js"></script>
+</body>
+</html>

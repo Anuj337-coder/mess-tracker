@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NGO Dashboard — FoodConnect</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="navbar" style="position:fixed">
+  <div class="nav-logo"><div class="logo-icon">🍱</div>Food<span>Connect</span></div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <button class="notif-btn" onclick="showSection('notifications',null)">🔔
+      <span class="notif-badge" id="pendingCount">0</span>
+    </button>
+    <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="logout()">
+      <div style="width:36px;height:36px;background:linear-gradient(135deg,#8b5cf6,#6d28d9);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white">🏥</div>
+      <span style="font-size:0.85rem;font-weight:600;color:var(--text-mid)" id="navUserName">NGO</span>
+    </div>
+  </div>
+</nav>
+
+<div class="dashboard-wrapper">
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-avatar" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)">🏥</div>
+    <div class="sidebar-user-name" id="sidebarName">Loading...</div>
+    <div class="sidebar-user-role">NGO Partner</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-label">Dashboard</div>
+    <a href="#" onclick="showSection('overview',this)" class="active"><span class="icon">📊</span> Overview</a>
+    <a href="#" onclick="showSection('requests',this)"><span class="icon">📥</span> Donation Requests</a>
+    <a href="#" onclick="showSection('notifications',this)"><span class="icon">🔔</span> Notifications</a>
+    <div class="sidebar-label">Profile</div>
+    <a href="#" onclick="showSection('profile',this)"><span class="icon">🏥</span> NGO Profile</a>
+    <div class="sidebar-label">Account</div>
+    <a href="#" onclick="logout()"><span class="icon">🚪</span> Logout</a>
+  </nav>
+</aside>
+
+<main class="main-content">
+
+  <!-- OVERVIEW -->
+  <div id="sec-overview" class="dash-section">
+    <div class="section-heading">
+      <h3>📊 NGO Overview</h3>
+      <span class="badge badge-ngo">Partner Dashboard</span>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon purple">📥</div><div><div class="stat-value" id="statPending">0</div><div class="stat-label">Pending Requests</div></div></div>
+      <div class="stat-card"><div class="stat-icon green">✅</div><div><div class="stat-value" id="statAccepted">0</div><div class="stat-label">Accepted</div></div></div>
+      <div class="stat-card"><div class="stat-icon blue">📦</div><div><div class="stat-value" id="statTotalKg">0 kg</div><div class="stat-label">Food Collected</div></div></div>
+      <div class="stat-card"><div class="stat-icon orange">⭐</div><div><div class="stat-value" id="statRating">—</div><div class="stat-label">Your Rating</div></div></div>
+    </div>
+    <!-- Quick pending requests -->
+    <div class="card" style="margin-top:8px">
+      <div class="section-heading">
+        <h3>🔔 Pending Requests</h3>
+        <button class="btn btn-outline btn-sm" onclick="showSection('requests',null)">View All →</button>
+      </div>
+      <div id="overviewPending"></div>
+    </div>
+  </div>
+
+  <!-- DONATION REQUESTS -->
+  <div id="sec-requests" class="dash-section" style="display:none">
+    <div class="section-heading">
+      <h3>📥 Donation Requests</h3>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-sm btn-outline" onclick="filterRequests('ALL')" id="filterAll">All</button>
+        <button class="btn btn-sm btn-primary" onclick="filterRequests('PENDING')" id="filterPending">Pending</button>
+        <button class="btn btn-sm" style="background:#d1fae5;color:#059669;border:none" onclick="filterRequests('ACCEPTED')">Accepted</button>
+        <button class="btn btn-sm" style="background:#fee2e2;color:#dc2626;border:none" onclick="filterRequests('REJECTED')">Rejected</button>
+      </div>
+    </div>
+    <div id="requestsList"></div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div id="sec-notifications" class="dash-section" style="display:none">
+    <div class="section-heading"><h3>🔔 Notification Log</h3></div>
+    <div id="notifLogList" style="display:flex;flex-direction:column;gap:12px"></div>
+  </div>
+
+  <!-- PROFILE -->
+  <div id="sec-profile" class="dash-section" style="display:none">
+    <div class="section-heading">
+      <h3>🏥 NGO Profile</h3>
+      <span class="badge badge-ngo">Visible to donors</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+      <!-- Profile preview card -->
+      <div class="ngo-card" style="cursor:default">
+        <div class="ngo-card-header">
+          <div class="ngo-avatar">🏥</div>
+          <div>
+            <div class="ngo-name" id="profileName">—</div>
+            <div class="ngo-location">📍 <span id="profileLocation">—</span></div>
+          </div>
+        </div>
+        <div class="ngo-meta">
+          <span class="badge badge-ngo">Verified ✓</span>
+          <span class="star-rating" id="profileRating">★★★★★</span>
+        </div>
+        <p class="ngo-accepts">🍽️ Accepts: <span id="profileAccepts">—</span></p>
+        <p style="font-size:0.8rem;color:var(--text-light);margin-top:8px">📧 <span id="profileEmail">—</span></p>
+      </div>
+      <!-- Edit form -->
+      <div class="card">
+        <h4 style="margin-bottom:18px;font-size:1rem">✏️ Edit Profile</h4>
+        <form id="profileForm">
+          <div class="form-group"><label>NGO Name</label>
+            <input type="text" id="editNgoName" class="form-control" placeholder="NGO Name"></div>
+          <div class="form-group"><label>Location / City</label>
+            <input type="text" id="editLocation" class="form-control" placeholder="City, State"></div>
+          <div class="form-group"><label>What Food Do You Accept?</label>
+            <input type="text" id="editAccepts" class="form-control" placeholder="e.g. Cooked meals, rice, dal..."></div>
+          <div class="form-group"><label>Contact Email</label>
+            <input type="email" id="editEmail" class="form-control" placeholder="ngo@email.com"></div>
+          <div class="form-group"><label>Contact Phone</label>
+            <input type="tel" id="editPhone" class="form-control" placeholder="9876543210"></div>
+          <button type="submit" class="btn btn-primary">💾 Save Profile</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- REJECT REASON MODAL -->
+<div class="modal-overlay" id="rejectModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h4>❌ Reject Donation Request</h4>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <p style="font-size:0.875rem;color:var(--text-mid);margin-bottom:16px">Please provide a reason so the donor is informed via email.</p>
+    <div class="form-group">
+      <label>Rejection Reason</label>
+      <input type="text" id="rejectReason" class="form-control" placeholder="e.g. We are at capacity today, please try tomorrow">
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn btn-danger" onclick="confirmReject()">Confirm Reject</button>
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+<script src="js/main.js"></script>
+<script src="js/api.js"></script>
+<script src="js/ngo.js"></script>
+</body>
+</html>

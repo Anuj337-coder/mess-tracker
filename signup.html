@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up — FoodConnect</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-logo">
+    <div class="logo-icon">🍱</div>
+    Food<span>Connect</span>
+  </div>
+  <div class="nav-btns">
+    <a href="index.html" class="btn btn-outline btn-sm">← Back to Home</a>
+  </div>
+</nav>
+
+<div class="auth-page">
+  <div class="auth-card animate-fade-up">
+    <div class="auth-logo">
+      <div class="logo-mark">
+        <div class="icon">🍱</div>
+        FoodConnect
+      </div>
+    </div>
+    <div class="auth-title">
+      <h2>Create Your Account</h2>
+      <p>Join the food waste reduction movement</p>
+    </div>
+
+    <!-- Role Selector -->
+    <div style="margin-bottom:22px">
+      <label style="font-size:0.85rem;font-weight:600;color:var(--text-mid);display:block;margin-bottom:10px">I am a...</label>
+      <div class="role-selector" id="roleSelector">
+        <div class="role-option" data-role="MESS" onclick="selectRole(this)">
+          <div class="role-icon">🍛</div>
+          <div class="role-name">Mess Owner</div>
+        </div>
+        <div class="role-option" data-role="PARTY" onclick="selectRole(this)">
+          <div class="role-icon">🎉</div>
+          <div class="role-name">Party Organizer</div>
+        </div>
+        <div class="role-option" data-role="INDIVIDUAL" onclick="selectRole(this)">
+          <div class="role-icon">🙋</div>
+          <div class="role-name">Individual</div>
+        </div>
+        <div class="role-option" data-role="NGO" onclick="selectRole(this)">
+          <div class="role-icon">🏥</div>
+          <div class="role-name">NGO</div>
+        </div>
+      </div>
+    </div>
+
+    <form id="signupForm" novalidate>
+      <div class="grid-2" style="gap:14px">
+        <div class="form-group" style="margin-bottom:14px">
+          <label for="firstName">First Name</label>
+          <input type="text" id="firstName" class="form-control" placeholder="Rahul" required>
+        </div>
+        <div class="form-group" style="margin-bottom:14px">
+          <label for="lastName">Last Name</label>
+          <input type="text" id="lastName" class="form-control" placeholder="Sharma" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="signupEmail">Email Address</label>
+        <input type="email" id="signupEmail" class="form-control" placeholder="you@example.com" required>
+      </div>
+
+      <!-- Mess Owner extra fields -->
+      <div id="messFields" style="display:none">
+        <div class="form-group">
+          <label for="messName">Mess / Hostel Name</label>
+          <input type="text" id="messName" class="form-control" placeholder="e.g. Sunrise Mess, GH-1 Hostel">
+        </div>
+        <div class="form-group">
+          <label for="messLocation">Location / City</label>
+          <input type="text" id="messLocation" class="form-control" placeholder="e.g. Bhopal, MP">
+        </div>
+      </div>
+
+      <!-- NGO extra fields -->
+      <div id="ngoFields" style="display:none">
+        <div class="form-group">
+          <label for="ngoName">NGO Name</label>
+          <input type="text" id="ngoName" class="form-control" placeholder="e.g. Hope Foundation">
+        </div>
+        <div class="form-group">
+          <label for="ngoLocation">NGO Location / City</label>
+          <input type="text" id="ngoLocation" class="form-control" placeholder="e.g. Bhopal, MP">
+        </div>
+        <div class="form-group">
+          <label for="ngoAccepts">What food do you accept?</label>
+          <input type="text" id="ngoAccepts" class="form-control" placeholder="e.g. Cooked meals, packaged food, fruits">
+        </div>
+        <div class="form-group">
+          <label for="ngoContact">Contact / WhatsApp Number</label>
+          <input type="tel" id="ngoContact" class="form-control" placeholder="9876543210">
+        </div>
+      </div>
+
+      <!-- Party Organizer extra fields -->
+      <div id="partyFields" style="display:none">
+        <div class="form-group">
+          <label for="orgName">Organization / Company Name</label>
+          <input type="text" id="orgName" class="form-control" placeholder="e.g. Royal Events Pvt. Ltd.">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="signupPassword">Password</label>
+        <input type="password" id="signupPassword" class="form-control" placeholder="Min. 6 characters" required>
+      </div>
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" class="form-control" placeholder="Re-enter password" required>
+      </div>
+
+      <input type="hidden" id="selectedRole" value="">
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg" id="signupBtn" style="margin-top:6px">
+        Create Account →
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      Already have an account? <a href="login.html">Login here</a>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

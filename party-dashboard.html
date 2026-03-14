@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Party Organizer Dashboard — FoodConnect</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<nav class="navbar" style="position:fixed">
+  <div class="nav-logo"><div class="logo-icon">🍱</div>Food<span>Connect</span></div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="logout()">
+      <div style="width:36px;height:36px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white">🎉</div>
+      <span style="font-size:0.85rem;font-weight:600;color:var(--text-mid)" id="navUserName">Party Organizer</span>
+    </div>
+  </div>
+</nav>
+
+<div class="dashboard-wrapper">
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-avatar" style="background:linear-gradient(135deg,#f59e0b,#d97706)">🎉</div>
+    <div class="sidebar-user-name" id="sidebarName">Loading...</div>
+    <div class="sidebar-user-role">Party Organizer</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-label">Tools</div>
+    <a href="#" onclick="showSection('estimator',this)" class="active"><span class="icon">🧮</span> Food Estimator</a>
+    <a href="#" onclick="showSection('history',this)"><span class="icon">📋</span> Estimates History</a>
+    <div class="sidebar-label">Community</div>
+    <a href="#" onclick="showSection('ngo',this)"><span class="icon">🏥</span> Connect NGO</a>
+    <a href="#" onclick="showSection('donations',this)"><span class="icon">📝</span> Donation History</a>
+    <div class="sidebar-label">Account</div>
+    <a href="#" onclick="logout()"><span class="icon">🚪</span> Logout</a>
+  </nav>
+</aside>
+
+<main class="main-content">
+
+  <!-- ESTIMATOR -->
+  <div id="sec-estimator" class="dash-section">
+    <div class="section-heading">
+      <h3>🧮 Smart Food Quantity Estimator</h3>
+      <span class="badge badge-warning">Based on guest count</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+      <div class="card">
+        <h4 style="margin-bottom:20px;font-size:1rem">Enter Event Details</h4>
+        <form id="estimatorForm">
+          <div class="form-group">
+            <label>Number of Guests</label>
+            <input type="number" id="guestCount" class="form-control" placeholder="e.g. 200" min="1" required>
+          </div>
+          <div class="form-group">
+            <label>Event Type</label>
+            <select id="eventType" class="form-control">
+              <option value="WEDDING">💍 Wedding / Shaadi</option>
+              <option value="BIRTHDAY">🎂 Birthday Party</option>
+              <option value="CORPORATE">💼 Corporate Event</option>
+              <option value="CASUAL">🎊 Casual Gathering</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Meal Type</label>
+            <select id="estMealType" class="form-control">
+              <option value="FULL">Full Meal (Lunch/Dinner)</option>
+              <option value="BREAKFAST">Breakfast</option>
+              <option value="SNACKS">Snacks + Tea</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Event Date</label>
+            <input type="date" id="eventDate" class="form-control">
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">🧮 Calculate Quantities</button>
+        </form>
+      </div>
+
+      <!-- RESULT PANEL -->
+      <div id="resultPanel" style="display:none">
+        <div class="card" style="background:var(--gradient);border:none;color:white">
+          <h4 style="color:white;margin-bottom:4px">🎉 Estimated Quantities</h4>
+          <p style="color:rgba(255,255,255,0.8);font-size:0.82rem;margin-bottom:16px" id="resultSubtitle">For 0 guests</p>
+          <div id="estimateResults"></div>
+          <hr style="border-color:rgba(255,255,255,0.2);margin:16px 0">
+          <button class="btn btn-white btn-sm" onclick="saveEstimate()">💾 Save Estimate</button>
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.15);color:white;margin-left:8px" onclick="showSection('ngo',null)">🤝 Find NGO for Leftovers</button>
+        </div>
+        <div class="chart-card" style="margin-top:16px">
+          <h4 style="font-size:0.95rem;margin-bottom:12px">📊 Visual Breakdown</h4>
+          <canvas id="partyEstimateChart" height="180"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tips -->
+    <div class="card" style="margin-top:24px;background:var(--bg);border:1px dashed var(--primary-light);box-shadow:none">
+      <h4 style="font-size:0.95rem;margin-bottom:12px;color:var(--primary)">💡 Pro Tips for Party Planning</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="font-size:0.82rem;color:var(--text-mid);display:flex;gap:8px"><span>📌</span><span>Always add 10-15% buffer for unexpected guests</span></div>
+        <div style="font-size:0.82rem;color:var(--text-mid);display:flex;gap:8px"><span>🥗</span><span>Order 25% less starters — guests fill up fast</span></div>
+        <div style="font-size:0.82rem;color:var(--text-mid);display:flex;gap:8px"><span>✅</span><span>Pre-confirm guest count 48 hours before event</span></div>
+        <div style="font-size:0.82rem;color:var(--text-mid);display:flex;gap:8px"><span>🤝</span><span>Pre-arrange NGO to collect leftover food</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div id="sec-history" class="dash-section" style="display:none">
+    <div class="section-heading"><h3>📋 Past Estimates</h3></div>
+    <div class="table-wrapper" style="background:white;border-radius:var(--radius);box-shadow:var(--shadow)">
+      <table>
+        <thead><tr><th>Date</th><th>Event</th><th>Guests</th><th>Meal Type</th><th>Total Est. Qty</th></tr></thead>
+        <tbody id="estHistoryBody">
+          <tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-light)">No estimates saved yet</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- NGO -->
+  <div id="sec-ngo" class="dash-section" style="display:none">
+    <div class="section-heading"><h3>🏥 Connect with NGOs</h3><span class="badge badge-ngo">Donate post-event surplus</span></div>
+    <div class="card" style="max-width:640px;margin-bottom:28px">
+      <h4 style="margin-bottom:16px;font-size:1rem">📦 Post Surplus Food</h4>
+      <form id="partyDonForm">
+        <div class="grid-2">
+          <div class="form-group"><label>Food Description</label>
+            <input type="text" id="pdFoodDesc" class="form-control" placeholder="e.g. Biryani, Sweets..." required></div>
+          <div class="form-group"><label>Quantity (kg)</label>
+            <input type="number" id="pdQty" class="form-control" placeholder="e.g. 25" min="0.5" step="0.5" required></div>
+        </div>
+        <div class="form-group"><label>Select NGO</label>
+          <select id="pdNGO" class="form-control" required><option value="">Loading...</option></select></div>
+        <div class="form-group"><label>Pickup Note</label>
+          <input type="text" id="pdNote" class="form-control" placeholder="e.g. Available at venue till 10 PM"></div>
+        <button type="submit" class="btn btn-success">🤝 Send Donation Request</button>
+      </form>
+    </div>
+    <div class="ngo-grid" id="partyNGOGrid">
+      <div class="empty-state"><div class="empty-icon">🔄</div><p>Loading NGOs...</p></div>
+    </div>
+  </div>
+
+  <!-- DONATION HISTORY -->
+  <div id="sec-donations" class="dash-section" style="display:none">
+    <div class="section-heading"><h3>📝 Donation History</h3></div>
+    <div class="table-wrapper" style="background:white;border-radius:var(--radius);box-shadow:var(--shadow)">
+      <table>
+        <thead><tr><th>Receipt #</th><th>NGO</th><th>Food</th><th>Qty</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody id="partyDonHistory">
+          <tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text-light)">No donations yet</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+</div>
+<div class="toast-container"></div>
+<script src="js/main.js"></script>
+<script src="js/api.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/party.js"></script>
+</body>
+</html>

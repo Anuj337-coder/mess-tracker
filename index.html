@@ -1,51 +1,379 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Mess Wastage Tracker</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodConnect — Food Waste Reduction & Donation Platform</title>
+  <meta name="description" content="FoodConnect connects mess owners, party organizers, and individuals with NGOs to reduce food waste and feed communities.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/landing.css">
 </head>
-
 <body>
 
-<h1>Mess Wastage Tracker</h1>
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="nav-logo">
+    <div class="logo-icon">🍱</div>
+    Food<span>Connect</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#roles">Who It's For</a></li>
+    <li><a href="#ngos">NGOs</a></li>
+  </ul>
+  <div class="nav-btns">
+    <a href="login.html" class="btn btn-outline">Login</a>
+    <a href="signup.html" class="btn btn-primary">Get Started</a>
+  </div>
+</nav>
 
-<div class="container">
+<!-- HERO SECTION -->
+<section class="hero hero-bg" id="hero">
+  <div class="hero-container">
+    <div class="hero-content animate-fade-left">
+      <div class="hero-badge">
+        <span>🌱</span> India's Food Waste Reduction Platform
+      </div>
+      <h1 class="hero-title">
+        Less Waste.<br>
+        More <span class="gradient-text">Impact.</span>
+      </h1>
+      <p class="hero-desc">
+        FoodConnect empowers mess owners, party organizers, and individuals to track food waste,
+        connect with local NGOs, and turn surplus food into community good — all in one place.
+      </p>
+      <div class="hero-actions">
+        <a href="signup.html" class="btn btn-primary btn-lg">
+          🚀 Start for Free
+        </a>
+        <a href="#how-it-works" class="btn btn-outline btn-lg">
+          See How It Works
+        </a>
+      </div>
+      <div class="hero-stats-row">
+        <div class="hero-stat">
+          <div class="hero-stat-value">12k+</div>
+          <div class="hero-stat-label">Meals Saved</div>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">340+</div>
+          <div class="hero-stat-label">Mess Owners</div>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">80+</div>
+          <div class="hero-stat-label">NGO Partners</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual animate-fade-right">
+      <div class="hero-card-float float">
+        <div class="float-card card-1">
+          <div class="float-icon">🥗</div>
+          <div>
+            <div class="float-label">Today's Savings</div>
+            <div class="float-value">48 kg food donated</div>
+          </div>
+        </div>
+        <div class="float-card card-2">
+          <div class="float-icon">✅</div>
+          <div>
+            <div class="float-label">NGO Response</div>
+            <div class="float-value">Hope NGO accepted!</div>
+          </div>
+        </div>
+        <div class="float-card card-3">
+          <div class="float-icon">📊</div>
+          <div>
+            <div class="float-label">Waste Reduced</div>
+            <div class="float-value">32% this week</div>
+          </div>
+        </div>
+        <div class="hero-dashboard-preview">
+          <div class="preview-header">
+            <div class="preview-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <div class="preview-title">Mess Dashboard</div>
+          </div>
+          <div class="preview-body">
+            <div class="preview-bar-row">
+              <span>Mon</span>
+              <div class="preview-bar" style="width:65%"></div>
+              <span class="preview-val">18kg</span>
+            </div>
+            <div class="preview-bar-row">
+              <span>Tue</span>
+              <div class="preview-bar" style="width:40%"></div>
+              <span class="preview-val">11kg</span>
+            </div>
+            <div class="preview-bar-row">
+              <span>Wed</span>
+              <div class="preview-bar" style="width:80%"></div>
+              <span class="preview-val">22kg</span>
+            </div>
+            <div class="preview-bar-row">
+              <span>Thu</span>
+              <div class="preview-bar" style="width:30%"></div>
+              <span class="preview-val">8kg</span>
+            </div>
+            <div class="preview-bar-row">
+              <span>Fri</span>
+              <div class="preview-bar green-bar" style="width:20%"></div>
+              <span class="preview-val good">5kg ✓</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-wave">
+    <svg viewBox="0 0 1440 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,60 C360,100 1080,20 1440,60 L1440,100 L0,100 Z" fill="#f0f6ff"/>
+    </svg>
+  </div>
+</section>
 
-<h2>Attendance</h2>
+<!-- ROLE CARDS SECTION -->
+<section class="roles-section" id="roles">
+  <div class="section-container">
+    <div class="section-title">
+      <span class="eyebrow">Who Is It For?</span>
+      <h2>One Platform, <span class="gradient-text">Four Solutions</span></h2>
+      <p>Whether you run a mess, plan parties, donate personally, or manage an NGO — FoodConnect has a tailored workspace for you.</p>
+    </div>
+    <div class="roles-grid">
 
-<label>Date</label>
-<input type="date" id="date">
+      <div class="role-card">
+        <div class="role-card-icon mess">🍛</div>
+        <h3>Mess Owners</h3>
+        <p>Track daily menus and food waste, visualize weekly analytics, and connect surplus food to nearby NGOs effortlessly.</p>
+        <ul class="role-features">
+          <li>✅ Daily menu entry</li>
+          <li>✅ Waste log & analytics</li>
+          <li>✅ NGO donation connect</li>
+          <li>✅ Donation history & receipts</li>
+        </ul>
+        <a href="signup.html?role=MESS" class="btn btn-primary btn-sm mt-4">Start as Mess Owner →</a>
+      </div>
 
-<label>Meal Type</label>
-<select id="meal">
-<option>Breakfast</option>
-<option>Lunch</option>
-<option>Dinner</option>
-</select>
+      <div class="role-card">
+        <div class="role-card-icon party">🎉</div>
+        <h3>Party Organizers</h3>
+        <p>Estimate the exact quantity of food to prepare based on guest count, and donate excess food to NGOs after the event.</p>
+        <ul class="role-features">
+          <li>✅ Smart quantity estimator</li>
+          <li>✅ Guest-count based planning</li>
+          <li>✅ Post-event NGO donation</li>
+          <li>✅ Donation receipts</li>
+        </ul>
+        <a href="signup.html?role=PARTY" class="btn btn-primary btn-sm mt-4">Start as Party Organizer →</a>
+      </div>
 
-<label>Students Present</label>
-<input type="number" id="students">
+      <div class="role-card">
+        <div class="role-card-icon individual">🙋</div>
+        <h3>Individuals</h3>
+        <p>Have food to spare? Browse verified local NGOs and donate directly through FoodConnect in just a few clicks.</p>
+        <ul class="role-features">
+          <li>✅ Browse verified NGOs</li>
+          <li>✅ Direct food donation</li>
+          <li>✅ Donation receipt & history</li>
+          <li>✅ Track your social impact</li>
+        </ul>
+        <a href="signup.html?role=INDIVIDUAL" class="btn btn-primary btn-sm mt-4">Start Donating →</a>
+      </div>
 
-<button onclick="saveAttendance()">Save Attendance</button>
+      <div class="role-card">
+        <div class="role-card-icon ngo">🏥</div>
+        <h3>NGOs</h3>
+        <p>Create a verified profile, receive donation requests from multiple sources, and manage food collection seamlessly.</p>
+        <ul class="role-features">
+          <li>✅ Verified NGO profile</li>
+          <li>✅ Donation request inbox</li>
+          <li>✅ Accept / Reject with reason</li>
+          <li>✅ Email notifications auto-sent</li>
+        </ul>
+        <a href="signup.html?role=NGO" class="btn btn-primary btn-sm mt-4">Register Your NGO →</a>
+      </div>
 
-<h2>Food Wastage</h2>
+    </div>
+  </div>
+</section>
 
-<label>Food Item</label>
-<input type="text" id="food">
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how-it-works">
+  <div class="section-container">
+    <div class="section-title">
+      <span class="eyebrow">Simple Process</span>
+      <h2>How <span class="gradient-text">FoodConnect</span> Works</h2>
+      <p>From surplus to served — a simple, 4-step journey that takes minutes, not days.</p>
+    </div>
+    <div class="steps-timeline">
+      <div class="step-item">
+        <div class="step-number">01</div>
+        <div class="step-icon">📝</div>
+        <h4>Register & Set Up</h4>
+        <p>Sign up with your role — mess owner, party organizer, individual, or NGO. Set up your profile in 2 minutes.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-item">
+        <div class="step-number">02</div>
+        <div class="step-icon">📊</div>
+        <h4>Log & Track</h4>
+        <p>Mess owners log daily menus and waste. Party organizers plan food quantities. All get visual analytics.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-item">
+        <div class="step-number">03</div>
+        <div class="step-icon">🤝</div>
+        <h4>Connect with NGO</h4>
+        <p>Browse nearby verified NGOs and send a donation request with food type, quantity, and pickup details.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step-item">
+        <div class="step-number">04</div>
+        <div class="step-icon">✉️</div>
+        <h4>Get Notified</h4>
+        <p>NGO accepts or rejects with a reason. You get an instant email notification. Donation receipt auto-generated.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-<label>Quantity Cooked (kg)</label>
-<input type="number" id="cooked">
+<!-- FEATURES SECTION -->
+<section class="features-section" id="features">
+  <div class="section-container">
+    <div class="section-title">
+      <span class="eyebrow">Platform Features</span>
+      <h2>Everything You Need to <span class="gradient-text">Fight Food Waste</span></h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h4>Food Waste Analytics</h4>
+        <p>Interactive weekly bar charts showing waste trends, cooked vs wasted comparison, and improvement highlights.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏥</div>
+        <h4>NGO Directory</h4>
+        <p>Browse verified NGO profiles with location, accepted food types, contact info, and star ratings.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧮</div>
+        <h4>Smart Quantity Estimator</h4>
+        <p>Enter guest count and event type — get instant food quantity suggestions (roti, rice, sabzi, desserts).</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h4>Donation History</h4>
+        <p>Complete log of all past donations with receipt codes, NGO names, status, and timestamps.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📧</div>
+        <h4>Email Notifications</h4>
+        <p>Automatic email alerts when NGO accepts or rejects your donation request — no manual follow-up needed.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔐</div>
+        <h4>Secure Authentication</h4>
+        <p>JWT-based login with role-specific dashboards. Your data is protected and private.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-<label>Quantity Wasted (kg)</label>
-<input type="number" id="wasted">
+<!-- IMPACT COUNTER SECTION -->
+<section class="impact-section">
+  <div class="impact-bg">
+    <div class="section-container">
+      <div class="section-title">
+        <span class="eyebrow" style="background:rgba(255,255,255,0.2);color:white;">Our Impact</span>
+        <h2 style="color:white;">Real Numbers, <span style="color:#60aeff">Real Change</span></h2>
+      </div>
+      <div class="impact-grid">
+        <div class="impact-item">
+          <div class="impact-number" data-target="12480">0</div>
+          <div class="impact-label">Meals Donated</div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-number" data-target="340">0</div>
+          <div class="impact-label">Mess Owners</div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-number" data-target="82">0</div>
+          <div class="impact-label">NGO Partners</div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-number" data-target="4600">0</div>
+          <div class="impact-label">kg Food Saved</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-<button onclick="calculateWaste()">Calculate Waste</button>
+<!-- CTA SECTION -->
+<section class="cta-section">
+  <div class="section-container">
+    <div class="cta-card">
+      <div class="cta-content">
+        <h2>Ready to Make a Difference?</h2>
+        <p>Join thousands of mess owners, organizers, and NGOs already using FoodConnect to fight food waste.</p>
+        <div class="cta-actions">
+          <a href="signup.html" class="btn btn-primary btn-lg">Create Free Account →</a>
+          <a href="login.html" class="btn btn-white btn-lg">Already a Member? Login</a>
+        </div>
+      </div>
+      <div class="cta-emoji">🌍</div>
+    </div>
+  </div>
+</section>
 
-<p id="result"></p>
+<!-- FOOTER -->
+<footer>
+  <div class="section-container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>🍱 FoodConnect</h3>
+        <p>A multi-role food waste reduction and donation platform connecting mess owners, party organizers, individuals, and NGOs across India.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="signup.html?role=MESS">For Mess Owners</a></li>
+          <li><a href="signup.html?role=PARTY">For Party Organizers</a></li>
+          <li><a href="signup.html?role=INDIVIDUAL">For Individuals</a></li>
+          <li><a href="signup.html?role=NGO">For NGOs</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Features</h4>
+        <ul>
+          <li><a href="#">Waste Analytics</a></li>
+          <li><a href="#">NGO Connect</a></li>
+          <li><a href="#">Quantity Estimator</a></li>
+          <li><a href="#">Donation History</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Use</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 FoodConnect. All rights reserved.</span>
+      <span>Made with ❤️ to fight food waste in India</span>
+    </div>
+  </div>
+</footer>
 
-</div>
-
-<script src="script.js"></script>
-
+<script src="js/main.js"></script>
 </body>
 </html>

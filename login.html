@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — FoodConnect</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-logo">
+    <div class="logo-icon">🍱</div>
+    Food<span>Connect</span>
+  </div>
+  <div class="nav-btns">
+    <a href="index.html" class="btn btn-outline btn-sm">← Back to Home</a>
+  </div>
+</nav>
+
+<div class="auth-page">
+  <div class="auth-card animate-fade-up">
+    <div class="auth-logo">
+      <div class="logo-mark">
+        <div class="icon">🍱</div>
+        FoodConnect
+      </div>
+    </div>
+    <div class="auth-title">
+      <h2>Welcome Back 👋</h2>
+      <p>Login to your account to continue</p>
+    </div>
+
+    <form id="loginForm" novalidate>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" class="form-control" placeholder="you@example.com" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div style="position:relative">
+          <input type="password" id="password" class="form-control" placeholder="••••••••" required style="padding-right:44px">
+          <button type="button" id="togglePwd" onclick="togglePassword()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--text-light);padding:0;margin:0">👁</button>
+        </div>
+      </div>
+      <div style="text-align:right;margin-bottom:20px">
+        <a href="#" style="font-size:0.82rem;color:var(--primary)">Forgot password?</a>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg" id="loginBtn">
+        Login to Dashboard
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      Don't have an account? <a href="signup.html">Create one free →</a>
+    </div>
+
+    <!-- Demo accounts info -->
+    <div style="margin-top:24px;background:var(--bg);border-radius:var(--radius-sm);padding:16px;border:1px solid var(--border)">
+      <p style="font-size:0.78rem;font-weight:700;color:var(--text-mid);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px">🧪 Demo Accounts</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <button class="demo-btn" onclick="fillDemo('mess@demo.com','demo123')">🍛 Mess Owner</button>
+        <button class="demo-btn" onclick="fillDemo('party@demo.com','demo123')">🎉 Party Org.</button>
+        <button class="demo-btn" onclick="fillDemo('individual@demo.com','demo123')">🙋 Individual</button>
+        <button class="demo-btn" onclick="fillDemo('ngo@demo.com','demo123')">🏥 NGO</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.demo-btn {
+  background: white;
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-mid);
+  font-family: 'Poppins', sans-serif;
+  transition: all var(--transition);
+  text-align: left;
+}
+.demo-btn:hover { background: var(--primary-xlight); border-color: var(--primary); color: var(--primary); }
+</style>
+
+<script src="js/main.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

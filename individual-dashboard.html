@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Individual Dashboard — FoodConnect</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav class="navbar" style="position:fixed">
+  <div class="nav-logo"><div class="logo-icon">🍱</div>Food<span>Connect</span></div>
+  <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="logout()">
+    <div style="width:36px;height:36px;background:linear-gradient(135deg,#10b981,#059669);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white">🙋</div>
+    <span style="font-size:0.85rem;font-weight:600;color:var(--text-mid)" id="navUserName">Individual</span>
+  </div>
+</nav>
+
+<div class="dashboard-wrapper">
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-avatar" style="background:linear-gradient(135deg,#10b981,#059669)">🙋</div>
+    <div class="sidebar-user-name" id="sidebarName">Loading...</div>
+    <div class="sidebar-user-role">Individual Donor</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-label">Donate</div>
+    <a href="#" onclick="showSection('browse',this)" class="active"><span class="icon">🏥</span> Browse NGOs</a>
+    <a href="#" onclick="showSection('donate',this)"><span class="icon">🤝</span> Donate Food</a>
+    <div class="sidebar-label">History</div>
+    <a href="#" onclick="showSection('history',this)"><span class="icon">📋</span> Donation History</a>
+    <div class="sidebar-label">Account</div>
+    <a href="#" onclick="logout()"><span class="icon">🚪</span> Logout</a>
+  </nav>
+</aside>
+
+<main class="main-content">
+
+  <!-- STATS -->
+  <div class="stats-grid" style="margin-bottom:28px">
+    <div class="stat-card"><div class="stat-icon green">🤝</div><div><div class="stat-value" id="statMyDon">0</div><div class="stat-label">Donations Made</div></div></div>
+    <div class="stat-card"><div class="stat-icon blue">🏥</div><div><div class="stat-value" id="statAvailNgos">0</div><div class="stat-label">Active NGOs</div></div></div>
+    <div class="stat-card"><div class="stat-icon purple">📦</div><div><div class="stat-value" id="statKgDon">0 kg</div><div class="stat-label">Food Donated</div></div></div>
+    <div class="stat-card"><div class="stat-icon orange">✅</div><div><div class="stat-value" id="statAccepted">0</div><div class="stat-label">Accepted</div></div></div>
+  </div>
+
+  <!-- BROWSE NGOs -->
+  <div id="sec-browse" class="dash-section">
+    <div class="section-heading">
+      <h3>🏥 Browse NGOs</h3>
+      <input type="text" id="ngoSearch" class="form-control" placeholder="🔍 Search by name or location..." style="max-width:280px" onkeyup="filterNGOs()">
+    </div>
+    <div class="ngo-grid" id="indNGOGrid">
+      <div class="empty-state"><div class="empty-icon">🔄</div><p>Loading NGOs...</p></div>
+    </div>
+  </div>
+
+  <!-- DONATE FORM -->
+  <div id="sec-donate" class="dash-section" style="display:none">
+    <div class="section-heading"><h3>🤝 Donate Food</h3><span class="badge badge-success">Fill in your donation details</span></div>
+    <div class="card" style="max-width:620px">
+      <form id="indDonForm">
+        <div class="form-group"><label>Select NGO</label>
+          <select id="indDonNGO" class="form-control" required><option value="">Select an NGO</option></select></div>
+        <div class="grid-2">
+          <div class="form-group"><label>Food Description</label>
+            <input type="text" id="indFoodDesc" class="form-control" placeholder="e.g. Home-cooked dal, rice..." required></div>
+          <div class="form-group"><label>Quantity (kg)</label>
+            <input type="number" id="indQty" class="form-control" placeholder="e.g. 3" min="0.1" step="0.1" required></div>
+        </div>
+        <div class="form-group"><label>Your Address / Pickup Location</label>
+          <input type="text" id="indAddress" class="form-control" placeholder="e.g. 45, MIG Colony, Bhopal" required></div>
+        <div class="form-group"><label>Available From (pickup time)</label>
+          <input type="text" id="indPickupTime" class="form-control" placeholder="e.g. Today 6 PM onwards"></div>
+        <button type="submit" class="btn btn-success btn-block" id="indDonBtn">
+          💚 Submit Donation Request
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div id="sec-history" class="dash-section" style="display:none">
+    <div class="section-heading"><h3>📋 My Donation History</h3></div>
+    <div class="table-wrapper" style="background:white;border-radius:var(--radius);box-shadow:var(--shadow)">
+      <table>
+        <thead><tr><th>Receipt #</th><th>NGO</th><th>Food</th><th>Qty</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody id="indHistoryBody">
+          <tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text-light)">No donations yet</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+</div>
+<div class="toast-container"></div>
+<script src="js/main.js"></script>
+<script src="js/api.js"></script>
+<script src="js/individual.js"></script>
+</body>
+</html>
