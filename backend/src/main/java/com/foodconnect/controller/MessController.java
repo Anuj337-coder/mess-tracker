@@ -22,6 +22,9 @@ public class MessController {
     // ---- Menu ----
     @PostMapping("/mess/menu")
     public ResponseEntity<?> addMenu(@RequestBody MessMenu menu) {
+        if (menu.getMenuItems() != null) {
+            menu.getMenuItems().forEach(item -> item.setMessMenu(menu));
+        }
         return ResponseEntity.ok(menuRepo.save(menu));
     }
 

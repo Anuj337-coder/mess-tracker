@@ -24,11 +24,11 @@ public class MessMenu {
     @Column(name = "meal_type", nullable = false)
     private MealType mealType;
 
-    @Column(nullable = false, length = 1000)
-    private String items;
+    @OneToMany(mappedBy = "messMenu", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonManagedReference
+    private java.util.List<MessMenuItem> menuItems = new java.util.ArrayList<>();
 
     private Integer servingsPlanned;
-    private Double qtyKg;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
